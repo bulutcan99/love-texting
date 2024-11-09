@@ -4,6 +4,10 @@ use ui::{ui_builder, Delegate};
 pub mod command;
 pub mod state;
 pub mod ui;
+
+//TODO: commands olarak kendi komutlarimizi yazacagiz
+//daha moduler hale getirecegiz
+//ve not defteri formatina benzetecegiz.
 fn main() {
     let main_window = WindowDesc::new(ui_builder())
         .title(LocalizedString::new("open-save-demo").with_placeholder("Opening/Saving Demo"));
