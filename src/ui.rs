@@ -1,6 +1,11 @@
+use std::fs;
+
 use druid::{
+    commands::SAVE_FILE_AS,
+    platform_menus,
     widget::{Align, Button, Flex, TextBox},
-    FileDialogOptions, FileSpec, Widget, WidgetExt, WindowDesc,
+    AppDelegate, Command, DelegateCtx, Env, FileDialogOptions, FileSpec, Handled, Target, Widget,
+    WidgetExt, WindowDesc,
 };
 
 #[derive(Debug, Clone)]
@@ -68,4 +73,43 @@ pub fn ui_builder() -> impl Widget<String> {
     col.add_child(save);
     col.add_child(open);
     Align::centered(col)
+}
+
+pub struct Delegate;
+
+impl AppDelegate<String> for Delegate {
+    fn command(
+        &mut self,
+        _ctx: &mut DelegateCtx,
+        _target: Target,
+        cmd: &Command,
+        data: &mut String,
+        _env: &Env,
+    ) -> Handled {
+        match cmd {
+            cmd if cmd.is(druid::commands::SHOW_SAVE_PANEL) => {
+                if let Some(file_info) = cmd.get(SAVE_FILE_AS) {
+                    if let Err(err) = fs::write(file_info.path(), &data[..]) {
+                        println!("Error: {}", err);
+                    }
+                }
+                Handled::Yes
+            }
+            cmd if cmd.is(druid::commands::OPEN_FILE) => {
+                if let Some(file_info) = cmd.get(druid::commands::OPEN_FILE) {
+                    match std::fs::read_to_string(file_info.path()) {
+                        Ok(contents) => {
+                            let first_line = contents.lines().next().unwrap_or("");
+                            *data = first_line.to_owned();
+                        }
+                        Err(_) => {
+                            println!("Error: Could not read file");
+                        }
+                    }
+                }
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
+    }
 }
