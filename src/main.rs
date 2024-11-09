@@ -1,5 +1,5 @@
 use druid::{AppLauncher, LocalizedString, WindowDesc};
-use ui::{ui_builder, Delegate};
+use ui::{ui_builder, Delegate, UiState};
 
 pub mod command;
 pub mod state;
@@ -16,7 +16,12 @@ pub mod ui;
 fn main() {
     let main_window = WindowDesc::new(ui_builder())
         .title(LocalizedString::new("open-save-demo").with_placeholder("Opening/Saving Demo"));
-    let data = "Type here.".to_owned();
+
+    let data = UiState {
+        font_size: 14.0,
+        input_text: "Type here.".to_owned(),
+    };
+
     AppLauncher::with_window(main_window)
         .delegate(Delegate)
         .log_to_console()
