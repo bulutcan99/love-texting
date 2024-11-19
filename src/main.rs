@@ -17,5 +17,4 @@ fn main() -> Result<(), Error> {
     buf.push(10);
     while io::stdin().read(&mut buf)? > 0 && buf != [b'q'] {}
     panic!("User quit the program");
-    Ok(())
 }
