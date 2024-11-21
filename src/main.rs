@@ -14,7 +14,9 @@ fn main() -> Result<(), Error> {
     let _ = CleanUp;
     terminal::enable_raw_mode()?;
     let mut buf = Vec::with_capacity(1);
-    buf.push(10);
-    while io::stdin().read(&mut buf)? > 0 && buf != [b'q'] {}
-    panic!("User quit the program");
+    while io::stdin().read(&mut buf)? == 1 && buf != [b'q'] {
+        let character = buf[0] as char;
+        println!("You pressed: {}", character);
+    }
+    Ok(())
 }
