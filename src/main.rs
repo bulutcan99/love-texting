@@ -1,4 +1,7 @@
-use std::io::{self, Read};
+use std::{
+    io::{self, Read},
+    time::Duration,
+};
 
 use anyhow::{Error, Ok};
 use crossterm::{
@@ -17,18 +20,22 @@ fn main() -> Result<(), Error> {
     let _ = CleanUp;
     terminal::enable_raw_mode()?;
     loop {
-        if let Event::Key(event) = event::read()? {
-            match event {
-                KeyEvent {
-                    code: KeyCode::Char('q'),
-                    modifiers: event::KeyModifiers::NONE,
-                    ..
-                } => break,
-                _ => {
-                    //todo
+        if event::poll(Duration::from_millis(500))? {
+            if let Event::Key(event) = event::read()? {
+                match event {
+                    KeyEvent {
+                        code: KeyCode::Char('q'),
+                        modifiers: event::KeyModifiers::CONTROL,
+                        ..
+                    } => break,
+                    _ => {
+                        //todo
+                    }
                 }
+                println!("{:?}\r", event)
             }
-            println!("{:?}\r", event)
+        } else {
+            println!("tick\r");
         }
     }
     Ok(())
