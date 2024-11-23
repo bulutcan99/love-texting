@@ -1,7 +1,10 @@
 use std::io::{self, Read};
 
 use anyhow::{Error, Ok};
-use crossterm::terminal;
+use crossterm::{
+    event::{self, Event, KeyCode, KeyEvent},
+    terminal,
+};
 
 struct CleanUp;
 impl Drop for CleanUp {
@@ -13,10 +16,20 @@ impl Drop for CleanUp {
 fn main() -> Result<(), Error> {
     let _ = CleanUp;
     terminal::enable_raw_mode()?;
-    let mut buf = Vec::with_capacity(1);
-    while io::stdin().read(&mut buf)? == 1 && buf != [b'q'] {
-        let character = buf[0] as char;
-        println!("You pressed: {}", character);
+    loop {
+        if let Event::Key(event) = event::read()? {
+            match event {
+                KeyEvent {
+                    code: KeyCode::Char('q'),
+                    modifiers: event::KeyModifiers::NONE,
+                    ..
+                } => break,
+                _ => {
+                    //todo
+                }
+            }
+            println!("{:?}\r", event)
+        }
     }
     Ok(())
 }
