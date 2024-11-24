@@ -8,6 +8,10 @@ use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
     terminal,
 };
+use text::{
+    editor::{self, Editor},
+    reader::Reader,
+};
 
 struct CleanUp;
 impl Drop for CleanUp {
@@ -19,24 +23,7 @@ impl Drop for CleanUp {
 fn main() -> Result<(), Error> {
     let _ = CleanUp;
     terminal::enable_raw_mode()?;
-    loop {
-        if event::poll(Duration::from_millis(500))? {
-            if let Event::Key(event) = event::read()? {
-                match event {
-                    KeyEvent {
-                        code: KeyCode::Char('q'),
-                        modifiers: event::KeyModifiers::CONTROL,
-                        ..
-                    } => break,
-                    _ => {
-                        //todo
-                    }
-                }
-                println!("{:?}\r", event)
-            }
-        } else {
-            println!("tick\r");
-        }
-    }
+    let editor = Editor::default();
+    while editor.run()? {}
     Ok(())
 }
