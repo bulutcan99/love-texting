@@ -1,15 +1,20 @@
 use anyhow::anyhow;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
-use crate::reader::Reader;
+use crate::{reader::Reader, screen::Screen};
 
+// All the editoring stuff will process here.
 pub struct Editor {
     reader: Reader,
+    screen: Screen,
 }
 
 impl Editor {
     pub fn new() -> Self {
-        Self { reader: Reader }
+        Self {
+            reader: Reader,
+            screen: Screen,
+        }
     }
 }
 
@@ -37,7 +42,12 @@ impl Editor {
         }
     }
 
+    pub fn start(&self) -> Result<(), anyhow::Error> {
+        self.screen.enable_raw_mode()
+    }
+
     pub fn run(&self) -> Result<bool, anyhow::Error> {
+        self.screen.clear_screen()?;
         self.process_key_stroke()
     }
 }

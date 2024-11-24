@@ -4,6 +4,7 @@ use anyhow::{self, Result};
 
 use crossterm::event::{self, Event, KeyEvent};
 
+// Here is for reading the users key stroke
 pub struct Reader;
 impl Reader {
     pub fn read_key_stroke(&self) -> Result<KeyEvent, anyhow::Error> {
